@@ -1,0 +1,12 @@
+[
+  {
+      "model": "tunaapi.song",
+      "pk": 1,
+      "fields": {
+          "title": "Circle The Drain",
+          "artist_id": 1,
+          "album": "Self-Titled",
+          "length": 12
+      }
+  }
+]
