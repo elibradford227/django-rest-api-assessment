@@ -28,6 +28,44 @@ class GenreView(ViewSet):
         serializer = GenreSerializer(genre, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
       
+    def create(self, request):
+        """Handle POST operations
+
+        Returns
+          Response -- JSON serialized genre instance
+        """
+        genre = Genre.objects.create(
+            description=request.data["description"],
+        )
+        serializer = GenreSerializer(genre, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def update(self, request, pk):
+        """Handle PUT requests for a genre
+
+        Returns:
+          Response -- Empty body with 204 status code
+        """
+
+        genre = Genre.objects.get(pk=pk)
+      
+        genre.description = request.data["description"]
+
+        genre.save()
+
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    def destroy(self, response, pk):
+        """Deletes Data
+
+        Returns:
+            Response: Empty body with 204 code
+        """
+        genre = Genre.objects.get(pk=pk)
+        genre.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        
+      
 class GenreSerializer(serializers.ModelSerializer):
     """JSON serializer for genres
     """

@@ -28,6 +28,49 @@ class ArtistView(ViewSet):
         serializer = ArtistSerializer(artist, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
       
+    def create(self, request):
+        """Handle POST operations
+
+        Returns
+          Response -- JSON serialized artist instance
+        """
+        artist = Artist.objects.create(
+            name=request.data["name"],
+            age=request.data["age"],
+            bio=request.data["bio"],
+        )
+        serializer = ArtistSerializer(artist, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def update(self, request, pk):
+        """Handle PUT requests for a artist
+
+        Returns:
+          Response -- Empty body with 204 status code
+        """
+
+        artist = Artist.objects.get(pk=pk)
+      
+        artist.name = request.data["name"]
+        artist.age = request.data["age"]
+        artist.bio= request.data["bio"]
+
+        artist.save()
+
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    def destroy(self, response, pk):
+        """Deletes Data
+
+        Returns:
+            Response: Empty body with 204 code
+        """
+        artist = Artist.objects.get(pk=pk)
+        artist.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        
+
+      
 class ArtistSerializer(serializers.ModelSerializer):
     """JSON serializer for artists
     """
