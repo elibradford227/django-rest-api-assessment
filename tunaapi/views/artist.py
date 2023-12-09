@@ -1,4 +1,5 @@
 from django.http import HttpResponseServerError
+from django.db.models import Count
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
@@ -17,6 +18,9 @@ class ArtistView(ViewSet):
         
         song = Song.objects.filter(artist=artist.id)
         artist.songs = song
+        # songcount = artist.songs
+        
+        # songs = Artist.objects.annotate(song_count=Count(songcount))
         
         serializer = ArtistSerializer(artist, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -87,6 +91,9 @@ class ArtistSerializer(serializers.ModelSerializer):
 
     """
     songs = SongSerializer(many=True, read_only=True)
+    songs_count = serializers.SerializerMethodField(default=None)
     class Meta:
         model = Artist
-        fields = ('id', 'name', 'age', 'bio', 'songs')
+        fields = ('id', 'name', 'age', 'bio', 'songs_count', 'songs')
+    def get_songs_count(self, obj):
+        return obj.songs.count()
