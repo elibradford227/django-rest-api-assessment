@@ -2,7 +2,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from tunaapi.models import Artist
+from tunaapi.models import Artist, Song
 
 class ArtistView(ViewSet):
     """Level up artist view"""
@@ -14,6 +14,10 @@ class ArtistView(ViewSet):
             Response -- JSON serialized artist
         """
         artist = Artist.objects.get(pk=pk)
+        
+        song = Song.objects.filter(artist=artist.id)
+        artist.songs = song
+        
         serializer = ArtistSerializer(artist, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -72,10 +76,17 @@ class ArtistView(ViewSet):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
         
 
-      
-class ArtistSerializer(serializers.ModelSerializer):
-    """JSON serializer for artists
+class SongSerializer(serializers.ModelSerializer):
+    """JSON serializer for songs
     """
     class Meta:
+        model = Song
+        fields = ('id', 'title', 'artist', 'album', 'length' )
+class ArtistSerializer(serializers.ModelSerializer):
+    """JSON serializer for artists
+
+    """
+    songs = SongSerializer(many=True, read_only=True)
+    class Meta:
         model = Artist
-        fields = ('id', 'name', 'age', 'bio')
+        fields = ('id', 'name', 'age', 'bio', 'songs')
