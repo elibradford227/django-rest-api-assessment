@@ -25,6 +25,7 @@ class ArtistView(ViewSet):
             Response -- JSON serialized list of artist
         """
         artist = Artist.objects.all()
+        
         serializer = ArtistSerializer(artist, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
       
@@ -56,8 +57,9 @@ class ArtistView(ViewSet):
         artist.bio= request.data["bio"]
 
         artist.save()
-
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        
+        serializer = ArtistSerializer(artist, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def destroy(self, response, pk):
         """Deletes Data

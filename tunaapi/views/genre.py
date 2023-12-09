@@ -52,8 +52,9 @@ class GenreView(ViewSet):
         genre.description = request.data["description"]
 
         genre.save()
-
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        
+        serializer = GenreSerializer(genre, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def destroy(self, response, pk):
         """Deletes Data
