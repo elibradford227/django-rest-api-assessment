@@ -34,6 +34,10 @@ class ArtistView(ViewSet):
         """
         artist = Artist.objects.all()
         
+        for a in artist:
+            songs = Song.objects.filter(artist=a.id)
+            a.songs = songs
+        
         serializer = ArtistSerializer(artist, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
       
